@@ -3,6 +3,7 @@ package org.zerock.domain;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /*
     각 게시물마다 고유의 번호가 필요
@@ -44,4 +45,7 @@ public class BoardVO {
 
     // 댓글의 숫자를 의미
     private int replyCnt;
+
+    // 첨부파일 처리
+    private List<BoardAttachVO> attachList;
 }
