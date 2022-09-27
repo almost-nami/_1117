@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.zerock.mapper.BoardMapper">
+
+    <!-- CDATA 부분은 XML에서 부등호를 사용하기 위해서 사용 -->
+    <select id="getList" resultType="org.zerock.domain.BoardVO">
+        <![CDATA[select * from tbl_board where bno > 0]]>
+    </select>
+
+    <!--
+        <sql> 태그는 id라는 속성을 이용해서 필요한 경우에 동일한 SQL의 일부를 재사용할 수 있음
+    -->
+    <!--
+        OR title ... OR content ... OR writer 와 같은 구문을 만들어 내므로
+        trim을 이용해서 맨 앞에서 생성되는 OR를 없애줌
+    -->
+    <sql id="criteria">
+        <trim prefix="(" suffix=") AND " prefixOverrides="OR">
+            <foreach item="type" collection="typeArr">
+                <trim prefix="OR">
+                    <choose>
+                        <when test="type == 'T'.toString()">
+                            title like '%'||#{keyword}||'%'
+                        </when>
+                        <when test="type == 'C'.toString()">
+                            content like '%'||#{keyword}||'%'
+                        </when>
+                        <when test="type == 'W'.toString()">
+                            writer like '%'||#{keyword}||'%'
+                        </when>
+                    </choose>
+                </trim>
+            </foreach>
+        </trim>
+    </sql>
+
+    <!-- 페이징 -->
+    <select id="getListWithPaging" resultType="org.zerock.domain.BoardVO">
+        <!-- 1.페이징처리
+        <![CDATA[
+            select bno, title, content, writer, regdate, updatedate
+            from
+            (
+                select /*+INDEX_DESC(tbl_board pk_board) */
+                rownum rn, bno, title, content, writer, regdate, updatedate
+                from tbl_board where rownum <= #{pageNum} * #{amount}
+            )
+            where rn > (#{pageNum} -1) * #{amount}
+        ]]>
+        -->
+        <!-- 2.검색처리 -->
+        <![CDATA[
+            select bno, title, content, writer, regdate, updatedate, replycnt
+            from
+            (
+                select /*+INDEX_DESC(tbl_board pk_board) */
+                rownum rn, bno, title, content, writer, regdate, updatedate, replycnt
+                from tbl_board
+                where
+        ]]>
+
+        <include refid="criteria"></include>
+
+        <![CDATA[
+            rownum <= #{pageNum} * #{amount}
+            )
+        where rn > (#{pageNum} - 1) * #{amount}
+        ]]>
+    </select>
+    <!--
+        검색조건이 없는 경우
+            select bno, title, content, writer, regdate, updatedate from
+            ( select /*+INDEX_DESC(tbl_board pk_board) */
+                rownum rn, bno, title, content, writer, regdate, updatedate
+            from tbl_board where rownum <= ? * ? )
+            where rn > (? - 1) * ?
+
+        단일검색(제목)
+            select bno, title, content, writer, regdate, updatedate from
+            ( select /*+INDEX_DESC(tbl_board pk_board) */
+                rownum rn, bno, title, content, writer, regdate, updatedate
+            from tbl_board where ( title like '%'||?||'%' ) AND rownum <= ? * ? )
+            where rn > (? - 1) * ?
+
+        다중검색(제목 OR 내용)
+            select bno, title, content, writer, regdate, updatedate from
+            ( select /*+INDEX_DESC(tbl_board pk_board) */
+                rownum rn, bno, title, content, writer, regdate, updatedate
+            from tbl_board
+            where ( title like '%'||?||'%' OR content like '%'||?||'%' ) AND rownum <= ? * ? )
+            where rn > (? - 1) * ?
+    -->
+
+    <select id="getTotalCount" resultType="int">
+        select count(*) from tbl_board where
+
+        <include refid="criteria"></include>
+
+        bno > 0
+    </select>
+
+    <!-- 단순히 시퀀스의 다음 값을 구해서 insert 할 때 사용 -->
+    <insert id="insert">
+        insert into tbl_board (bno, title, content, writer)
+        values (seq_board.nextval, #{title}, #{content}, #{writer})
+    </insert>
+
+    <!--
+        @SelectKey : PK값을 미리 SQL을 통해서 처리해 두고 특정한 이름으로 결과를 보관하는 방식
+        SQL을 한 번 더 실행하는 부담이 있지만 자동으로 추가되는 PK값을 확인해야 하는 경우 사용할 수 있음
+    -->
+    <insert id="insertSelectKey">
+        <selectKey keyProperty="bno" order="BEFORE"
+                   resultType="long">
+            select seq_board.nextval from dual
+        </selectKey>
+
+        insert into tbl_board (bno, title, content, writer)
+        values (#{bno}, #{title}, #{content}, #{writer})
+    </insert>
+
+    <select id="read" resultType="org.zerock.domain.BoardVO">
+        select * from tbl_board where bno = #{bno}
+    </select>
+
+    <delete id="delete">
+        delete from tbl_board where bno = #{bno}
+    </delete>
+
+    <!--
+        updateDate : 최종 수정시간이므로 현재 시간으로 변경
+        regdate : 최초 생성 시간이므로 변경하지 않음
+    -->
+    <update id="update">
+        update tbl_board
+        set title = #{title},
+        content = #{content},
+        writer = #{writer},
+        updateDate = sysdate
+        where bno = #{bno}
+    </update>
+
+    <update id="updateReplyCnt">
+        update tbl_board set replycnt = replycnt + #{amount} where bno = #{bno}
+    </update>
+
+</mapper>

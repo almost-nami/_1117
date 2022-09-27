@@ -7,6 +7,7 @@
     <mvc:annotation-driven></mvc:annotation-driven>
 
     <context:component-scan base-package="org.zerock.controller"></context:component-scan>
+    <context:component-scan base-package="org.zerock.service"></context:component-scan>
 
     <mvc:resources mapping="/resources/**" location="/resources/"/>
 
