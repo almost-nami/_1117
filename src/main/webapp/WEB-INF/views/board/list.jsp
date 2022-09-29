@@ -45,7 +45,7 @@
                                         <c:out value="${board.title}"/> <b>[<c:out value="${board.replyCnt}"/>]</b></a></td>
                                     <td><c:out value="${board.writer}"/></td>
                                     <td><fmt:formatDate pattern="yyyy-MM-dd" value="${board.regdate}"/></td>
-                                    <td><fmt:formatDate pattern="yyyy-MM-dd" value="${board.updateDate}"/></td>
+                                    <td><fmt:formatDate pattern="yyyy-MM-dd" value="${board.updatedate}"/></td>
                                 </tr>
                             </c:forEach>
                         </table>
@@ -149,6 +149,7 @@
             <!-- /.col-lg-6 -->
         </div>
         <!-- /.row -->
+
     <script type="text/javascript">
         $(document).ready(function(){
             var result = '<c:out value="${result}"/>';
@@ -189,18 +190,20 @@
                 actionForm.submit();
             });
 
+            // 검색 버튼 처리
             var searchForm = $("#searchForm");
 
             $("#searchForm button").on("click", function(e){
                 if(!searchForm.find("option:selected").val()) {
-                    alert("검색종류를 선택하세요");
+                    alert("검색종류를 선택하세요.");
                     return false;
                 }
                 if(!searchForm.find("input[name='keyword']").val()) {
-                    alert("키워드를 입력하세요");
+                    alert("키워드를 입력하세요.");
                     return false;
                 }
                 searchForm.find("input[name='pageNum']").val("1");
+
                 e.preventDefault();
 
                 searchForm.submit();

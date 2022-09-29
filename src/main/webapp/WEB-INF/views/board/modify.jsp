@@ -168,6 +168,7 @@
                 // button의 기본동작을 막고 submit()을 수행하게 함
                e.preventDefault();
 
+               // submit 버튼의 data-oper 속성 값
                var operation = $(this).data("oper");
 
                console.log(operation);
@@ -184,6 +185,7 @@
                    var keywordTag = $("input[name='keyword']").clone();
                    var typeTag = $("input[name='type']").clone();
 
+                   // clone()으로 필요한 부분만 복사해두고 form의 내용을 모두 지우고 다시 필요한 태그만 추가
                    formObj.empty();
                    formObj.append(pageNumTag);
                    formObj.append(amountTag);

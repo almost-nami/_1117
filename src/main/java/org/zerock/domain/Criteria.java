@@ -5,13 +5,20 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.web.util.UriComponentsBuilder;
 
+
+/*
+    Criteria : 검색의 기준
+ */
 @Getter
 @Setter
 @ToString
 public class Criteria {
+
+    // 페이징 처리
     private int pageNum;
     private int amount;
 
+    // 검색 처리
     private String type;
     private String keyword;
 
@@ -30,7 +37,8 @@ public class Criteria {
         return type == null ? new String[] {} : type.split("");
     }
 
-    // UriComponentsBuilder는 queryParam() 메서드를 이용해서 파라미터를 URL로 인코딩해줌
+    // UriComponentsBuilder는 여러 개의 파라미터들을 연결해서 URL의 형태로 만들어줌
+    // -> queryParam() 메서드를 이용해서 파라미터를 URL로 인코딩
     public String getListLink() {
         UriComponentsBuilder builder = UriComponentsBuilder.fromPath("")
                 .queryParam("pageNum", this.pageNum)

@@ -5,7 +5,11 @@
 
 <mapper namespace="org.zerock.mapper.BoardMapper">
 
-    <!-- CDATA 부분은 XML에서 부등호를 사용하기 위해서 사용 -->
+    <!--
+        CDATA 부분은 XML에서 부등호를 사용하기 위해서 사용
+        XML에서는 < > 를 태그로 인식
+        &lt; &gt; 와 같은 특수문자를 사용할 수도 있음
+    -->
     <select id="getList" resultType="org.zerock.domain.BoardVO">
         <![CDATA[select * from tbl_board where bno > 0]]>
     </select>
@@ -15,7 +19,11 @@
     -->
     <!--
         OR title ... OR content ... OR writer 와 같은 구문을 만들어 내므로
-        trim을 이용해서 맨 앞에서 생성되는 OR를 없애줌
+        trim의 prefixOverrides을 이용해서 맨 앞에서 생성되는 OR를 없애줌
+        prefix : trim문 앞에 해당 문자열을 붙여줌
+        suffix : trim문 뒤에 해당 문자열을 붙여줌
+        prefixOverrides : trim문 가장 앞에 해당 문자열을 지워줌
+        suffixOverrides : trim문 가장 뒤에 해당 문자열을 지워줌
     -->
     <sql id="criteria">
         <trim prefix="(" suffix=") AND " prefixOverrides="OR">
@@ -82,16 +90,16 @@
             select bno, title, content, writer, regdate, updatedate from
             ( select /*+INDEX_DESC(tbl_board pk_board) */
                 rownum rn, bno, title, content, writer, regdate, updatedate
-            from tbl_board where ( title like '%'||?||'%' ) AND rownum <= ? * ? )
-            where rn > (? - 1) * ?
+            from tbl_board where ( title like '%'||#{keyword}||'%' ) AND rownum <= #{pageNum} * #{amount} )
+            where rn > (#{pageNum} - 1) * #{amount}
 
         다중검색(제목 OR 내용)
             select bno, title, content, writer, regdate, updatedate from
             ( select /*+INDEX_DESC(tbl_board pk_board) */
                 rownum rn, bno, title, content, writer, regdate, updatedate
             from tbl_board
-            where ( title like '%'||?||'%' OR content like '%'||?||'%' ) AND rownum <= ? * ? )
-            where rn > (? - 1) * ?
+            where ( title like '%'||#{keyword}||'%' OR content like '%'||#{keyword}||'%' ) AND rownum <= #{pageNum} * #{amount} )
+            where rn > (#{pageNum} - 1) #{amount} ?
     -->
 
     <select id="getTotalCount" resultType="int">
@@ -139,7 +147,7 @@
         set title = #{title},
         content = #{content},
         writer = #{writer},
-        updateDate = sysdate
+        updatedate = sysdate
         where bno = #{bno}
     </update>
 
