@@ -11,6 +11,17 @@ import org.zerock.domain.ReplyPageDTO;
 import org.zerock.domain.ReplyVO;
 import org.zerock.service.ReplyService;
 
+/*
+    등록      /replies/new                POST
+    조회      /replies/:rno               GET
+    삭제      /replies/:rno               DELETE
+    수정      /replies/:rno               PUT or PATCH
+    페이지     /replies/pages/:bno/:page   GET
+
+    REST방식으로 동작하는 URL을 설계할 때는 PK를 기준으로 작성하는 것이 좋음
+    PK만으로 조회, 수정, 삭제가 가능하기 때문
+    댓글의 목록은 PK를 사용할 수 없기 때문에 파라미터로 게시물의 번호(bno)와 페이지 번호(page)를 URL에서 표현
+ */
 @RequestMapping("/replies")
 @RestController
 @Log4j
@@ -18,7 +29,7 @@ import org.zerock.service.ReplyService;
 public class ReplyController {
     private ReplyService service;
 
-    // consumes와 produces를 이용해서 JSON방식의 데이터만 처리하도록 하고 문자열을 반환하도록 함
+    // consumes(Content-Type)와 produces를 이용해서 JSON방식의 데이터만 처리하도록 하고 문자열을 반환하도록 함
     // @RequestBody를 적용해서 JSON 데이터를 ReplyVO 타입으로 변환하도록 지정
     @PostMapping(value = "/new", consumes = "application/json", produces = {MediaType.TEXT_PLAIN_VALUE})
     public ResponseEntity<String> create(@RequestBody ReplyVO vo) {

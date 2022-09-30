@@ -1,6 +1,7 @@
 console.log("Reply Module........");
 
 var replyService = (function(){
+    // Ajax 호출이 성공하고, callback 값으로 적절한 함수가 존재한다면 해당 함수를 호출해서 결과를 반영
     function add(reply, callback, error){
         console.log("add reply..........");
 

@@ -74,6 +74,8 @@ public class ReplyServiceImpl implements ReplyService {
 
     @Override
     public ReplyPageDTO getListPage(Criteria cri, Long bno) {
+
+        // 페이징 처리를 위해 댓글 수와 List<ReplyVO>를 같이 전달
         return new ReplyPageDTO(
                 mapper.getCountByBno(bno), mapper.getListWithPaging(cri, bno)
         );

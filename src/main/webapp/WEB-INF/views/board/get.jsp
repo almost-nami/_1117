@@ -191,6 +191,7 @@
     </div>
 
     <!-- Modal -->
+    <!-- tabindex 속성을 이용하면 해당 속성을 가진 태그에 focus할 수 있고 focus를 받는 순간부터 입력이 가능해짐 -->
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -229,13 +230,14 @@
 
     <script>
         // Ajax호출은 replyService라는 객체에 감춰져 있으므로 필요한 파라미터들만 전달하는 형식
-        console.log("================");
-        console.log("JS TEST");
+        // console.log("================");
+        // console.log("JS TEST");
 
         var bnoValue = '<c:out value="${board.bno}"/>';
 
         /*
         // for replyService add test
+        // add()의 파라미터는 JavaScript의 객체 타입과 Ajax 전송 결과를 처리하는 함수
         replyService.add(
             {reply : "JS TEST", replyer : "tester", bno : bnoValue},
             function(result){
@@ -289,6 +291,7 @@
 
             showList(1);
 
+            // 댓글 페이지 호출
             function showList(page){
                 console.log("show list " + page);
 
@@ -349,6 +352,7 @@
                 $(".modal").modal("show");
             });
 
+            // 댓글 등록
             modalRegisterBtn.on("click", function(e){
                 var reply = {
                     reply : modalInputReply.val(),
@@ -358,15 +362,25 @@
                 replyService.add(reply, function(result){
                     alert(result);
 
+                    // 모달창내 입력항목 비우기
                     modal.find("input").val("");
+                    // 모달창 숨기
                     modal.modal("hide");
 
+                    // 댓글목록 갱신
                     // showList(1);
                     showList(-1);
 
                 });
             });
 
+            /*
+                동적으로 Ajax를 통해 <li>태그들이 만들어지면 이후에 이벤트를 등록해야함
+                    -> 이벤트 위임(delegation)
+                이벤트 위임 : 이벤트를 동적으로 생성되는 요소가 아님 이미 존재하는 요소에 이벤트를 걸어주고
+                            나중에 이벤트의 대상을 변경해 주는 방식
+             */
+            // <ul>태그의 클래스 'chat'을 이용해서 이벤트를 걸고 실제 이벤트 대상 <li>를 파라미터로 지정
             $(".chat").on("click", "li", function(e){
                 var rno = $(this).data("rno");
 
@@ -385,8 +399,9 @@
                 });
             });
 
+            // 댓글 수정
             modalModBtn.on("click", function(e){
-                var reply = {rno:modal.data("rno"), reply: modalInputReply.val()};
+                var reply = {rno: modal.data("rno"), reply: modalInputReply.val()};
 
                 replyService.update(reply, function(result){
 
@@ -397,6 +412,7 @@
                 });
             });
 
+            // 댓글 삭제
             modalRemoveBtn.on("click", function(e){
                 var rno = modal.data("rno");
 
@@ -409,6 +425,7 @@
                 });
             });
 
+            // 댓글의 페이징 처리
             var pageNum = 1;
             var replyPageFooter = $(".panel-footer");
 

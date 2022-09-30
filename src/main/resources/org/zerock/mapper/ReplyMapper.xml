@@ -11,14 +11,17 @@
             values (seq_reply.nextval, #{bno}, #{reply}, #{replyer})
     </insert>
 
+    <!-- 특정 댓글 읽기 -->
     <select id="read" resultType="org.zerock.domain.ReplyVO">
         select * from tbl_reply where rno = #{rno}
     </select>
 
+    <!-- 댓글 삭제 -->
     <delete id="delete">
         delete from tbl_reply where rno = #{rno}
     </delete>
 
+    <!-- 댓글 수정 : 댓글의 내용(reply)과 최종수정시간(updatedate)을 수정 -->
     <update id="update">
         update tbl_reply set reply = #{reply}, updatedate = sysdate where rno = #{rno}
     </update>
@@ -32,6 +35,12 @@
     -->
 
     <!-- 댓글 페이징 -->
+    <!--
+        댓글을 조회할 때 댓글번호(rno)가 중심이 아니라, 게시물의 번호(bno)가 중심
+            -> 'tbl_reply where bno = 200 order by rno asc'와 같은 방식으로 접근
+        bno별로 댓글들을 모아두면 특정 게시물의 댓글을 찾을 때 모여있는 부분만 찾을 수 있게 되어 효율적
+            -> 인덱스를 생성 : create index idx_reply on tbl_reply (bno desc, rno asc);
+    -->
     <select id="getListWithPaging" resultType="org.zerock.domain.ReplyVO">
         <![CDATA[
         select rno, bno, reply, replyer, replydate, updatedate
