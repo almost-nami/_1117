@@ -31,6 +31,13 @@ import java.util.List;
         values (seq_board.nextval, 'test_title', 'test_content', 'user00');
 
     *오라클은 insert 후 commit을 수동으로 처리해야 함 !
+
+    게시물의 목록 페이지에서 일반적으로 댓글의 숫자고 같이 표시
+        -> 댓글을 추가한 뒤에 댓글의 숫자를 표시하려면 조인을 하거나 서브쿼리를 이용해서 처리해야함
+        -> tbl_board에 댓글의 숫자를 컬럼으로 처리하는 경우기 많음
+        But, 댓글이 추가될 때에는 댓글을 의미하는 tbl_reply 테이블에 insert하고
+        댓글의 숫자는 tbl_board 테이블에 update 시켜주는 작업이 필요하고
+        두 작업은 하나의 트랜잭션으로 관리되어야 하는 작업 !
  */
 
 // 테이블의 컬럼 구조를 반영하는 VO(Value Object) 클래스 생성

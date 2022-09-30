@@ -151,6 +151,7 @@
         where bno = #{bno}
     </update>
 
+    <!-- 댓글이 추가되었을 때 tbl_board 테이블에 replyCnt 컬럼내용 업데이트 -->
     <update id="updateReplyCnt">
         update tbl_board set replycnt = replycnt + #{amount} where bno = #{bno}
     </update>
