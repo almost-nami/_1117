@@ -104,6 +104,7 @@
     }
 
     $(document).ready(function (){
+        // 첨부파일의 확장자가 exe, sh, zip, alz인 파일의 업로드 제한
         var regex = new RegExp("(.*?)\.(exe|sh|zip|alz)$");
         var maxSize = 5242880;  // 5MB
 
@@ -113,6 +114,7 @@
                 return false;
             }
 
+            // test() : 문자열에 일치하는 부분이 있는지 확인
             if(regex.test(fileName)) {
                 alert("해당 종류의 파일은 업로드할 수 없습니다.");
                 return false;
@@ -120,10 +122,12 @@
 
             return true;
         }
-
+        // <input type='file'>은 readonly여서 내용을 수정할 수 없음
+        // 내용이 없는 <input type='file'>를 복사한 뒤에 첩부파일을 업로드 후에 복사된 객체를 다시 추가
         var cloneObj = $(".uploadDiv").clone();
 
         $("#uploadBtn").on("click", function (e){
+            // formData는 가상의 <form>태그
             var formData = new FormData();
 
             var inputFile = $("input[name='uploadFile']");
@@ -135,10 +139,12 @@
             // add File Data to formData
             for(var i=0; i<files.length; i++) {
 
+                // 확장자와 파일크기 검사
                 if(!checkExtension(files[i].name, files[i].size)) {
                     return false;
                 }
 
+                // fileData를 formData에 추가
                 formData.append("uploadFile", files[i]);
             }
 
@@ -149,10 +155,13 @@
                 data: formData,
                 type: 'POST',
                 dataType: 'json',
+                // 정상적으로 응답을 받은 경우 success 콜백이 호출됨
+                // success 콜백 함수의 파라미터 응답바디, 응답코드, XHR헤드
                 success: function (result) {
 
                   console.log(result);
 
+                  // 첨부파일 목록을 보여주는 부분
                   showUploadedFile(result);
 
                   $(".uploadDiv").html(cloneObj.html());
@@ -180,6 +189,7 @@
             });
         });
 
+        // 첨부파일 목록을 보여주는 부분
         function showUploadedFile(uploadResultArr){
 
             var str = "";
@@ -187,6 +197,7 @@
             $(uploadResultArr).each(function (i, obj){
                 if(!obj.image) {
 
+                    // encodeURIComponent() : 파일 이름에 포함된 공백 문자나 한글 이름 처리
                     var fileCallPath = encodeURIComponent(obj.uploadPath + "/" + obj.uuid + "_" + obj.fileName);
 
                     var fileLink = fileCallPath.replace(new RegExp(/\\/g), "/");

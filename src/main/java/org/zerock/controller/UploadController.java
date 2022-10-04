@@ -41,6 +41,18 @@ public class UploadController {
         log.info("upload form");
     }
 
+    /*
+        파일처리 : MultipartFile
+            -> 첨부파일을 여러 개 선택할 수 있으므로 배열타입으로 설정
+        MultipartFile의 메소드
+            -> getName() : 파라미터의 이름, <input>태그의 이름
+            -> getOriginalFileName() : 업로드되는 파일의 이름
+            -> isEmpty() : 파일이 존재하지 않는 경우 true
+            -> getSize() : 업로드되는 파일의 크기
+            -> getBytes() : byte[]로 파일 데이터 변환
+            -> getInputStream() : 파일데이터와 연결된 InputStream을 반환
+            -> transferTo(File file) : 파일의 저장
+     */
     @PostMapping("/uploadFormAction")
     public void uploadFormPost(MultipartFile[] uploadFile, Model model){
 
@@ -68,6 +80,7 @@ public class UploadController {
         log.info("upload ajax");
     }
 
+    // 현재 시간을 이용해서 폴더경로 만들기
     private String getFolder() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -78,6 +91,7 @@ public class UploadController {
         return str.replace("-", File.separator);
     }
 
+    // 파일이 이미지 파일인지 확인
     private boolean checkImageType(File file) {
         try {
             String contentType = Files.probeContentType(file.toPath());
@@ -100,6 +114,7 @@ public class UploadController {
         File uploadPath = new File(uploadFolder, getFolder());
         log.info("upload path : " + uploadPath);
 
+        // getFolder()의 경로가 있는지 검사
         if(uploadPath.exists() == false) {
             uploadPath.mkdirs();
         }
@@ -113,13 +128,14 @@ public class UploadController {
 
             String uploadFileName = multipartFile.getOriginalFilename();
 
-            // IE has file path
+            // IE has file path : IE의 경우 전체 파일 경로가 전송되므로 마지막 \를 기준으로 잘라낸 문자열이 실제 파일 이름
             uploadFileName = uploadFileName.substring(uploadFileName.lastIndexOf("\\") + 1);
 
             log.info("only file name : " + uploadFileName);
 
             UUID uuid = UUID.randomUUID();
 
+            // 원래의 파일 이름을 구분할 수 있도록 중간에 '_'를 추가
             uploadFileName = uuid.toString() + "_" + uploadFileName;
 
             // File saveFile = new File(uploadFolder, uploadFileName);
@@ -129,11 +145,12 @@ public class UploadController {
                 File saveFile = new File(uploadPath, uploadFileName);
                 multipartFile.transferTo(saveFile);
 
-                // check image type file
+                // check image type file : 이미지 파일일 경우 섬네일 생성
                 if(checkImageType(saveFile)) {
                     FileOutputStream thumbnail
                             = new FileOutputStream(new File(uploadPath, "s_" + uploadFileName));
 
+                    // Thumbnailator는 InputStream과 java.io.File 객체를 이용해서 파일을 생성
                     Thumbnailator.createThumbnail(multipartFile.getInputStream(), thumbnail, 100, 100);
 
                     thumbnail.close();
@@ -145,6 +162,7 @@ public class UploadController {
     }
      */
 
+    // AttachFileDTO의 리스트를 반환하는 구조
     @PostMapping(value = "/uploadAjaxAction", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<List<AttachFileDTO>> uploadAjaxPost(MultipartFile[] uploadFile) {
@@ -171,6 +189,7 @@ public class UploadController {
             uploadFileName = uploadFileName.substring(uploadFileName.lastIndexOf("\\") + 1);
 
             log.info("only file name : " + uploadFileName);
+
             attachDTO.setFileName(uploadFileName);
 
             UUID uuid = UUID.randomUUID();
@@ -219,8 +238,12 @@ public class UploadController {
 
         try {
             HttpHeaders header = new HttpHeaders();
-             header.add("Content-Type", Files.probeContentType(file.toPath()));
-             result = new ResponseEntity<>(
+            /*
+                브라우저에서 보내주는 MIME 타입이 파일종류에 따라 달라짐
+                -> probeContentType()을 이용해서 적절한 MIME 타입 데이터를 Http 헤더에 포함
+             */
+            header.add("Content-Type", Files.probeContentType(file.toPath()));
+            result = new ResponseEntity<>(
                      FileCopyUtils.copyToByteArray(file), header, HttpStatus.OK);
         } catch (IOException e) {
             e.printStackTrace();
