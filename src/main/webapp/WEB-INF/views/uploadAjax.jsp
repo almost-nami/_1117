@@ -86,14 +86,23 @@
 <button id="uploadBtn">Upload</button>
 
 <script>
+    // 원본 이미지 보여주기
     function showImage(fileCallPath) {
         // alert(fileCallPath);
 
         $(".bigPictureWrapper").css("display", "flex").show();
 
+        // animate() 지정된 시간동안 화면에서 열리는 효과
         $(".bigPicture").html("<img src='/display?fileName=" + encodeURI(fileCallPath) + "'>")
             .animate({width: '100%', height: '100%'}, 1000);
 
+        /*
+            setTimeout()에 적용된 '=>(ES6의 화살표 함수)'는 chrome에서는 정상작동하지만
+            IE11에서는 제대로 동작하지 않으므로 변경이 필요함
+                setTimeout(function(){
+                    $('.bigPictureWrapper').hide();
+                }, 1000);
+         */
         $(".bigPictureWrapper").on("click", function (e){
             $(".bigPicture").animate({width: '0%', height: '0%'}, 1000);
             setTimeout(() => {
@@ -172,6 +181,7 @@
 
         var uploadResult = $(".uploadResult ul");
 
+        // 첨부 파일 삭제
         $(".uploadResult").on("click", "span", function (e){
             var targetFile = $(this).data("file");
             var type = $(this).data("type");
@@ -211,8 +221,10 @@
 
                     var originPath = obj.uploadPath + "\\" + obj.uuid + "_" + obj.fileName;
 
+                    // /\\/g 전체에서 \를 찾음
                     originPath = originPath.replace(new RegExp(/\\/g), "/");
 
+                    // 섬네일 클릭시 showImage() 호출 -> javascript:showImage()
                     str += "<li><a href=\"javascript:showImage(\'"+originPath+"\')\"><img src='/display?fileName="
                         + fileCallPath + "'></a><span data-file=\'"+fileCallPath+"\' data-type='image'> x </span></li>";
                 }

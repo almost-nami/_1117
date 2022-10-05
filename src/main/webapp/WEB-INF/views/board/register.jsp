@@ -178,6 +178,7 @@
             return  true;
         }
 
+        // 업로드된 결과를 화면에 섬네일 등을 만들어서 처리하는 부분
         function showUploadResult(uploadResultArr) {
             if (!uploadResultArr || uploadResultArr.length == 0) {
                 return;
@@ -221,6 +222,7 @@
             uploadUL.append(str);
         }
 
+        // X 아이콘 클릭시 서버에서 파일 삭제
         $(".uploadResult").on("click", "button", function (e){
             console.log("delete file");
 
@@ -228,6 +230,7 @@
 
             var type = $(this).data("type");
 
+            // closest 가장 가까운 부모 호출
             var targetLi = $(this).closest("li");
 
             $.ajax({
@@ -243,6 +246,7 @@
             });
         });
 
+        // 파일 업로드는 <input type='file'>의 내용이 변경되는 것을 감지해서 처리
         $("input[type='file']").change(function (e){
             var formData = new FormData();
 

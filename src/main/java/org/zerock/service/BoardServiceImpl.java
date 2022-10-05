@@ -25,6 +25,7 @@ public class BoardServiceImpl implements BoardService {
     @Setter(onMethod_ = @Autowired)
     private BoardAttachMapper attachMapper;
 
+    // 게시물의 등록 작업은 tbl_board 테이블과 tbl_attach 테이블 양쪽 모두 insert가 진행되어야 함
     @Transactional
     @Override
     public void register(BoardVO board) {

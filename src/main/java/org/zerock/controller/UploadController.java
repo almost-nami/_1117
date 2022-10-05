@@ -252,6 +252,8 @@ public class UploadController {
         return result;
     }
 
+    // 다운로드가 가능한 MIME타입 application/octet-stream
+    // HttpServletRequest에 포함된 헤더중 User-Agent를 이용하면 브라우저의 종류, 모바일/데스크톱, 프라우저 프로그램 종류 확인가능
     @GetMapping(value = "/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<Resource> downloadFile(@RequestHeader("User-Agent") String userAgent, String fileName) {
 
@@ -266,6 +268,7 @@ public class UploadController {
         //Remove UUID
         String resourceOriginalName = resourceName.substring(resourceName.indexOf("_") + 1);
 
+        // 다운로드 시 파일의 이름을 처리함
         HttpHeaders headers = new HttpHeaders();
 
         try {
@@ -288,6 +291,7 @@ public class UploadController {
                 downloadName = new String(resourceOriginalName.getBytes("UTF-8"), "ISO-8859-1");
             }
 
+            // 다운로드 시 저장되는 이름 'Content-Disposition'을 이용해 지정
             headers.add("Content-Disposition",
                     "attachment; filename=" + downloadName);
         } catch (UnsupportedEncodingException e) {
@@ -297,7 +301,8 @@ public class UploadController {
         return new ResponseEntity<Resource>(resource, headers, HttpStatus.OK);
     }
 
-    @PostMapping("deleteFile")
+    // 서버에서 첨부파일 삭제
+    @PostMapping("/deleteFile")
     @ResponseBody
     public ResponseEntity<String> deleteFile(String fileName, String type) {
         log.info("deleteFile : " + fileName);
@@ -309,6 +314,7 @@ public class UploadController {
 
             file.delete();
 
+            // 이미지 파일인 경우 섬네일 파일도 삭제
             if(type.equals("image")) {
                 String largeFileName = file.getAbsolutePath().replace("s_", "");
 
