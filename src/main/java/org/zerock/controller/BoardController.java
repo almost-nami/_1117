@@ -144,6 +144,7 @@ public class BoardController {
         return "redirect:/board/list" + cri.getListLink();
     }
 
+    // 첨부파일과 관련된 데이터를 JSON으로 반환 -> RestController가 아니므로 ResponseBody이용해서 JSON으로 변환
     @GetMapping(value = "/getAttachList", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<List<BoardAttachVO>> getAttachList(Long bno) {
@@ -152,6 +153,7 @@ public class BoardController {
         return new ResponseEntity<>(service.getAttachList(bno), HttpStatus.OK);
     }
 
+    // 파일 삭제
     private void deleteFiles(List<BoardAttachVO> attachList) {
         if(attachList == null || attachList.size() == 0) {
             return;
@@ -167,9 +169,10 @@ public class BoardController {
 
                 Files.deleteIfExists(file);
 
+                // 이미지파일의 경우 섬네일 파일도 함께 삭제
                 if(Files.probeContentType(file).startsWith("image")) {
                     Path thumbNail = Paths.get("/Users/nami/Documents/spring/upload/"
-                            + attach.getUploadPath() + "/" + attach.getUuid() + "_" + attach.getFileName());
+                            + attach.getUploadPath() + "/s_" + attach.getUuid() + "_" + attach.getFileName());
 
                     Files.delete(thumbNail);
                 }

@@ -214,6 +214,7 @@
     </script>
 
     <script>
+        // 첨부파일 보여주는 작업
         $(document).ready(function (){
             (function (){
                 var bno = '<c:out value="${board.bno}"/>';
@@ -238,7 +239,7 @@
                             str += "</li>";
                         } else {
                             str += "<li data-path='"+attach.uploadPath+"' data-uuid='"+attach.uuid+"' data-filename='"+attach.fileName+"' data-type='"+attach.fileType+"'><div>";
-                            str += "<span>" + attach.fileName + "</span><br/>";
+                            str += "<span>" + attach.fileName + "</span>";
                             str += "<button type='button' data-file=\'"+fileCallPath+"\' data-type='file' ";
                             str += "class='btn btn-warning btn-circle'><i class='fa fa-times'></i></button><br>";
                             str += "<img src='/resources/img/attach.png'>";

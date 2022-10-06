@@ -37,6 +37,7 @@ public class Criteria {
         return type == null ? new String[] {} : type.split("");
     }
 
+    // redirect에 필요한 파라미터들을 한번에 처리
     // UriComponentsBuilder는 여러 개의 파라미터들을 연결해서 URL의 형태로 만들어줌
     // -> queryParam() 메서드를 이용해서 파라미터를 URL로 인코딩
     public String getListLink() {

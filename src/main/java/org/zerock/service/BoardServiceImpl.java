@@ -104,6 +104,7 @@ public class BoardServiceImpl implements BoardService {
         return mapper.getTotalCount(cri);
     }
 
+    // 게시물의 번호를 이용해 BoardAttachVO로 변환
     @Override
     public List<BoardAttachVO> getAttachList(Long bno) {
         log.info("get Attach list by bno : " + bno);

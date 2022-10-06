@@ -63,7 +63,7 @@
     </div>
     <!-- /.row -->
 
-    <!-- 첨부파일 -->
+    <!-- 이미지파일의 원본 이미지를 보여주는 영역 -->
     <div class='bigPictureWrapper'>
         <div class='bigPicture'>
 
@@ -123,6 +123,7 @@
         }
     </style>
 
+    <!-- 첨부파일 목록이 보여지는 영역 -->
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
@@ -499,6 +500,7 @@
     </script>
 
     <script>
+        // 게시물의 첨부파일을 가져오는 부분이 자동으로 동작하게 처리
         $(document).ready(function (){
             (function (){
                 var bno = '<c:out value="${board.bno}"/>';
@@ -533,6 +535,7 @@
 
             })();   // end function
 
+            // 첨부파일 클릭 -> 이미지 파일은 원본이미지 보여주기/일반 파일은 다운로드 처리
             $(".uploadResult").on("click", "li", function (e){
                 console.log("view image");
 
