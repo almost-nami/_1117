@@ -5,6 +5,7 @@ import lombok.extern.log4j.Log4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.zerock.domain.Criteria;
 import org.zerock.domain.ReplyPageDTO;
@@ -31,6 +32,7 @@ public class ReplyController {
 
     // consumes(Content-Type)와 produces를 이용해서 JSON방식의 데이터만 처리하도록 하고 문자열을 반환하도록 함
     // @RequestBody를 적용해서 JSON 데이터를 ReplyVO 타입으로 변환하도록 지정
+    @PreAuthorize("isAuthenticated()")
     @PostMapping(value = "/new", consumes = "application/json", produces = {MediaType.TEXT_PLAIN_VALUE})
     public ResponseEntity<String> create(@RequestBody ReplyVO vo) {
         log.info("ReplyVO : " + vo);
@@ -84,8 +86,9 @@ public class ReplyController {
     }
 
     // 댓글 삭제
-    @DeleteMapping(value = "/{rno}", produces = {MediaType.TEXT_PLAIN_VALUE})
-    public ResponseEntity<String> remove(@PathVariable("rno") Long rno) {
+    @PreAuthorize("principal.username == #vo.replyer")
+    @DeleteMapping(value = "/{rno}")
+    public ResponseEntity<String> remove(@RequestBody ReplyVO vo, @PathVariable("rno") Long rno) {
         log.info("remove : " + rno);
 
         return service.remove(rno) == 1
@@ -96,12 +99,11 @@ public class ReplyController {
     // 댓글 수정
     // 실제 수정되는 데이터는 JSON 포맷이므로 @RequestBody를 이용해서 처리
     //  -> @RequestBody로 처리되는 데이터는 일반 파라미터나 @PathVariable 파라미터를 처리할 수 없으므로 직접 처리해야 함
+    @PreAuthorize("principal.username == #vo.replyer")
     @RequestMapping(method = {RequestMethod.PUT, RequestMethod.PATCH},
-        value="/{rno}", consumes = "application/json", produces = {MediaType.TEXT_PLAIN_VALUE})
+        value="/{rno}", consumes = "application/json")
     public ResponseEntity<String> modify(
-            @RequestBody ReplyVO vo, @PathVariable("rno") Long rno
-    ) {
-        vo.setRno(rno);
+            @RequestBody ReplyVO vo, @PathVariable("rno") Long rno) {
 
         log.info("rno : " + rno);
         log.info("modify : " + vo);

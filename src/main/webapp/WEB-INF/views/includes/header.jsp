@@ -1,3 +1,4 @@
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%--
   Created by IntelliJ IDEA.
   User: nami
@@ -262,8 +263,14 @@
                     <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
                     </li>
                     <li class="divider"></li>
-                    <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
-                    </li>
+
+                    <sec:authorize access="isAuthenticated()">
+                        <li><a href="/customLogout"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li>
+                    </sec:authorize>
+
+                    <sec:authorize access="isAnonymous()">
+                        <li><a href="/customLogin"><i class="fa fa-sign-out fa-fw"></i> Login</a></li>
+                    </sec:authorize>
                 </ul>
                 <!-- /.dropdown-user -->
             </li>

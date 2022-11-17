@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="EX_CARD@112.170.80.66" uuid="b99e6439-7b6a-4b47-8153-843da758a966">
+      <driver-ref>tibero</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.tmax.tibero.jdbc.TbDriver</jdbc-driver>
+      <jdbc-url>jdbc:tibero:thin:@112.170.80.66:18729:EX_CARD</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="tibero@112.175.92.227" uuid="4c46f37b-1f75-41c3-868d-31d09709fca6">
+      <driver-ref>tibero</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.tmax.tibero.jdbc.TbDriver</jdbc-driver>
+      <jdbc-url>jdbc:tibero:thin:@112.175.92.227:18629:tibero</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="BOOK" uuid="3b0fd881-6891-4d1b-83ff-5c6e0576fdf5">
+      <driver-ref>oracle.19</driver-ref>
+      <synchronize>true</synchronize>
+      <auto-commit>false</auto-commit>
+      <jdbc-driver>oracle.jdbc.OracleDriver</jdbc-driver>
+      <jdbc-url>jdbc:oracle:thin:@localhost:1521:XE</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+  </component>
+</project>

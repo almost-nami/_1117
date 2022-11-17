@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -62,6 +63,7 @@ public class BoardController {
     }
 
     @GetMapping("/register")
+    @PreAuthorize("isAuthenticated()")
     public void register() {
 
     }
@@ -71,6 +73,7 @@ public class BoardController {
         메서드를 이용해서 화면에 한 번만 사용하고 다음에는 사용되지 않는 데이터를 전달하기 위해 사용
      */
     @PostMapping("/register")
+    @PreAuthorize("isAuthenticated()")
     public String register(BoardVO board, RedirectAttributes rttr) {
         // RedirectAttributes addFlashAttribute() -> 일회성으로만 데이터를 전달
 
@@ -97,6 +100,7 @@ public class BoardController {
         model.addAttribute("board", service.get(bno));
     }
 
+    @PreAuthorize("principal.username == #board.writer")
     @PostMapping("/modify")
     public String modify(BoardVO board, @ModelAttribute("cri") Criteria cri, RedirectAttributes rttr) {
         log.info("modify : " + board);
@@ -117,6 +121,7 @@ public class BoardController {
     }
 
     // UriComponentsBuilder를 이용하면 파라미터들을 GET방식에 적합한 URL로 만들어줌
+    @PreAuthorize("principal.username == #writer")
     @PostMapping("/remove")
     public String remove(@RequestParam("bno") Long bno,
                          @ModelAttribute("cri") Criteria cri, RedirectAttributes rttr) {
